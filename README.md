@@ -45,14 +45,14 @@ Pocketwav is a USB audio input device built on the Raspberry Pi Pico (RP2040). I
 ### Build
 
 ```bash
-cd firmware
-mkdir build
-cd build
+cd firmware/build
 cmake ..
 make
 ```
 
-This produces `src/blink.uf2` — the flashable firmware image.
+This produces:
+- `src/blink.uf2` — Phase 1 sanity test
+- `src/usb_audio.uf2` — Phase 2 USB Audio enumeration test
 
 ### Flash to Pico
 
@@ -61,9 +61,15 @@ This produces `src/blink.uf2` — the flashable firmware image.
 3. Release BOOTSEL — the Pico appears as a USB drive (RPI-RP2)
 4. Copy the `.uf2` file:
    ```bash
+   # Phase 1: Blink test
    cp src/blink.uf2 /Volumes/RPI-RP2/
+   
+   # Phase 2: USB Audio enumeration
+   cp src/usb_audio.uf2 /Volumes/RPI-RP2/
    ```
 5. The Pico automatically reboots and runs the firmware
+
+**Note:** For Phase 2 (usb_audio), you'll need a USB-to-UART adapter connected to GPIO 0 (TX) and GPIO 1 (RX) to see debug output, since USB is now the audio device.
 
 ### Verify
 
@@ -76,11 +82,14 @@ This produces `src/blink.uf2` — the flashable firmware image.
 
 ## Development Phases
 
-### Phase 1: USB Audio Enumeration (Current)
+### Phase 1: Toolchain Setup
 - [x] Repo + toolchain setup
 - [x] Blink sanity test with USB stdio
-- [ ] TinyUSB UAC1 descriptors
-- [ ] Stream silence/test tone
+
+### Phase 2: USB Audio Enumeration (Current)
+- [x] TinyUSB UAC1 descriptors
+- [x] Mount/unmount callbacks with LED status
+- [ ] Enumeration reliability testing (20x plug/unplug)
 - [ ] Validate on Mac + iPhone
 
 ### Phase 2: SD Card Integration
